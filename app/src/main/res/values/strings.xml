@@ -1,0 +1,11 @@
+<resources>
+    <string name="app_name">Coffee Now</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="nav_coffee_makers">Coffee Makers</string>
+    <string name="nav_coffee_types">Coffee Types</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
