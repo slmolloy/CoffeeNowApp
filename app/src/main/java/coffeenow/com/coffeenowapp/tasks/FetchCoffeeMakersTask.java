@@ -1,4 +1,4 @@
-package coffeenow.com.coffeenowapp;
+package coffeenow.com.coffeenowapp.tasks;
 
 import android.content.Context;
 import android.net.Uri;
@@ -16,8 +16,6 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-
-import javax.net.ssl.HttpsURLConnection;
 
 public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
 

@@ -1,4 +1,4 @@
-package coffeenow.com.coffeenowapp;
+package coffeenow.com.coffeenowapp.activities;
 
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -17,6 +17,9 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import coffeenow.com.coffeenowapp.tasks.FetchCoffeeMakersTask;
+import coffeenow.com.coffeenowapp.R;
 
 public class ActivityHome extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
