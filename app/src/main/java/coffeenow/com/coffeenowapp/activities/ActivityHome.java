@@ -1,8 +1,10 @@
 package coffeenow.com.coffeenowapp.activities;
 
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.FragmentManager;
 import android.view.View;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,26 +14,31 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.widget.ArrayAdapter;
-import android.widget.ListView;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import coffeenow.com.coffeenowapp.tasks.FetchCoffeeMakersTask;
+import coffeenow.com.coffeenowapp.fragments.FragmentCoffeeMakers;
 import coffeenow.com.coffeenowapp.R;
+import coffeenow.com.coffeenowapp.fragments.FragmentUsers;
 
-public class ActivityHome extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class ActivityHome extends AppCompatActivity implements
+        NavigationView.OnNavigationItemSelectedListener,
+        FragmentUsers.OnFragmentInteractionListener {
 
-    private ArrayAdapter<String> mCoffeeMakerAdapter;
+    private final String LOG_TAG = ActivityHome.class.getSimpleName();
+    private FragmentManager mFragmentManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_activity_home);
+        setContentView(R.layout.activity_home);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        mFragmentManager = getSupportFragmentManager();
+
+        if (savedInstanceState == null) {
+            mFragmentManager.beginTransaction()
+                    .add(R.id.content, new FragmentCoffeeMakers())
+                    .commit();
+        }
 
         FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.fab);
         fab.setOnClickListener(new View.OnClickListener() {
@@ -41,20 +48,6 @@ public class ActivityHome extends AppCompatActivity
                         .setAction("Action", null).show();
             }
         });
-
-        List<String> coffeeMakerList = new ArrayList<>();
-
-        mCoffeeMakerAdapter = new ArrayAdapter<String>(
-                this,
-                R.layout.list_item_coffee_maker,
-                R.id.list_item_coffee_maker_textView,
-                coffeeMakerList
-        );
-
-        updateCoffeeMakers();
-
-        ListView listView = (ListView) findViewById(R.id.listview_coffeemakers);
-        listView.setAdapter(mCoffeeMakerAdapter);
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
@@ -105,9 +98,15 @@ public class ActivityHome extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_coffee_makers) {
-
-        } else if (id == R.id.nav_coffee_types) {
-
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.content, new FragmentCoffeeMakers())
+                    .addToBackStack("coffee-makers")
+                    .commit();
+        } else if (id == R.id.nav_users) {
+            mFragmentManager.beginTransaction()
+                    .replace(R.id.content, new FragmentUsers())
+                    .addToBackStack("users")
+                    .commit();
         }
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
@@ -115,8 +114,8 @@ public class ActivityHome extends AppCompatActivity
         return true;
     }
 
-    private void updateCoffeeMakers() {
-        FetchCoffeeMakersTask task = new FetchCoffeeMakersTask(getApplicationContext(), mCoffeeMakerAdapter);
-        task.execute();
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+        return;
     }
 }

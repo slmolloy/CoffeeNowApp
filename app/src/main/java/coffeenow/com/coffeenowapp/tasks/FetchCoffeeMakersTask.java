@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
+import org.joda.time.DateTime;
+import org.joda.time.format.ISODateTimeFormat;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,19 +19,21 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
-public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
+import coffeenow.com.coffeenowapp.models.CoffeeMaker;
 
-    private final String TAG = FetchCoffeeMakersTask.class.getSimpleName();
+public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]> {
 
-    private ArrayAdapter<String> mCoffeeMakerAdapter;
+    private final String LOG_TAG = FetchCoffeeMakersTask.class.getSimpleName();
+
+    private ArrayAdapter<CoffeeMaker> mCoffeeMakerAdapter;
     private final Context mContext;
 
-    public FetchCoffeeMakersTask(Context context, ArrayAdapter<String> coffeeMakerAdapter) {
+    public FetchCoffeeMakersTask(Context context, ArrayAdapter<CoffeeMaker> coffeeMakerAdapter) {
         mContext = context;
         mCoffeeMakerAdapter = coffeeMakerAdapter;
     }
 
-    private String[] getCoffeeMakerDataFromJson(String jsonStr)
+    private CoffeeMaker[] getCoffeeMakerDataFromJson(String jsonStr)
             throws JSONException {
 
         final String CM_ID = "_id";
@@ -38,22 +42,32 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
         final String CM_LOCATION = "location";
         final String CM_VOLUME = "volume";
         final String CM_PRIVATE = "isPrivate";
-        final String CM_ON = "on";
+        final String CM_ON = "isOn";
         final String CM_CURRENT_VOLUME = "currentVolume";
         final String CM_CREATED = "createdAt";
 
-        JSONArray jsonArray = new JSONArray(jsonStr);
-        String[] result = new String[jsonArray.length()];
+        Log.v(LOG_TAG, "getCoffeeMakerDataFromJson: yippe!");
 
+        JSONArray jsonArray = new JSONArray(jsonStr);
+        CoffeeMaker[] result = new CoffeeMaker[jsonArray.length()];
         for (int i = 0; i < jsonArray.length(); i++) {
-            JSONObject coffeeMaker = jsonArray.getJSONObject(i);
-            result[i] = coffeeMaker.getString(CM_NAME);
+            JSONObject cm = jsonArray.getJSONObject(i);
+            result[i] = new CoffeeMaker(cm.getString(CM_NAME));
+            result[i].setId(cm.getString(CM_ID));
+            result[i].setToken(cm.getString(CM_TOKEN));
+            result[i].setLocation(cm.getString(CM_LOCATION));
+            result[i].setVolume(cm.getInt(CM_VOLUME));
+            result[i].setPrivate(cm.getBoolean(CM_PRIVATE));
+            result[i].setOn(cm.getBoolean(CM_ON));
+            result[i].setCurrentVolume(cm.getInt(CM_CURRENT_VOLUME));
+            DateTime dt = ISODateTimeFormat.dateTime().parseDateTime(cm.getString(CM_CREATED));
+            result[i].setCreatedAt(dt.toDate());
         }
         return result;
     }
 
     @Override
-    protected String[] doInBackground(String... params) {
+    protected CoffeeMaker[] doInBackground(String... params) {
         //final String COFFEE_MAKER_BASE_URL = "https://tranquil-lowlands-46896.herokuapp.com/api/v1/makers";
         final String COFFEE_MAKER_BASE_URL = "http://10.0.2.2:3000/api/v1/makers";
 
@@ -88,7 +102,7 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
 
             jsonResponse = buffer.toString();
         } catch (IOException e) {
-            Log.e(TAG, "Error", e);
+            Log.e(LOG_TAG, "Error", e);
 
             return null;
         } finally {
@@ -99,7 +113,7 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
                 try {
                     reader.close();
                 } catch (IOException e) {
-                    Log.e(TAG, "Error closing reader", e);
+                    Log.e(LOG_TAG, "Error closing reader", e);
                 }
             }
         }
@@ -107,7 +121,7 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
         try {
             return getCoffeeMakerDataFromJson(jsonResponse);
         } catch (JSONException e) {
-            Log.e(TAG, "Error", e);
+            Log.e(LOG_TAG, "Error", e);
             e.printStackTrace();
         }
 
@@ -115,14 +129,12 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, String[]> {
     }
 
     @Override
-    protected void onPostExecute(String[] result) {
+    protected void onPostExecute(CoffeeMaker[] result) {
         if (result != null && mCoffeeMakerAdapter != null) {
             mCoffeeMakerAdapter.clear();
-            for(String coffeeMaker : result) {
+            for(CoffeeMaker coffeeMaker : result) {
                 mCoffeeMakerAdapter.add(coffeeMaker);
             }
-
-
         }
     }
 }
