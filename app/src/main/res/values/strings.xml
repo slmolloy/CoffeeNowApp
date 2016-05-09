@@ -11,7 +11,7 @@
     <string name="nav_coffee_types">Coffee Types</string>
 
 
-    <string name="coffee_maker_message">Coffee makers!</string>
+    <string name="coffee_maker_message">Coffee makers</string>
     <string name="user_message">Users with access</string>
 
     <string name="create_coffee_maker_message">Add a new coffee maker</string>

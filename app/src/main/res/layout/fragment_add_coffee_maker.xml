@@ -7,7 +7,9 @@
         android:id="@+id/createCoffeeMaker"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/create_coffee_maker_message" />
+        android:text="@string/create_coffee_maker_message"
+        android:textSize="18sp"
+        android:textStyle="bold" />
 
     <LinearLayout
         android:layout_width="match_parent"

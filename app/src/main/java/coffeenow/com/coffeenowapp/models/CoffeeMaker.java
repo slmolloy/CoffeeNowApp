@@ -1,6 +1,7 @@
 package coffeenow.com.coffeenowapp.models;
 
 import java.util.Date;
+import java.util.Locale;
 
 public class CoffeeMaker {
     public static final String CM_ID = "_id";
@@ -12,6 +13,8 @@ public class CoffeeMaker {
     public static final String CM_ON = "isOn";
     public static final String CM_CURRENT_VOLUME = "currentVolume";
     public static final String CM_CREATED = "createdAt";
+    public static final String CM_LAT = "latitude";
+    public static final String CM_LONG = "longitude";
 
     private String id;
     private String name;
@@ -22,6 +25,8 @@ public class CoffeeMaker {
     private boolean isOn;
     private int currentVolume;
     private Date createdAt;
+    private Double latitude;
+    private Double longitude;
 
     public CoffeeMaker(String name) {
         this.name = name;
@@ -99,8 +104,26 @@ public class CoffeeMaker {
         this.createdAt = createdAt;
     }
 
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
     @Override
     public String toString() {
-        return getName() + " (" + getVolume() + " cups)";
+        return String.format(Locale.getDefault(),
+                "%s (%d cups) -- Lat: %.3f Long: %.3f",
+                getName(), getVolume(), getLatitude(), getLongitude());
     }
 }

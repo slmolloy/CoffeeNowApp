@@ -44,6 +44,8 @@ public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker
         result.put(CM_LOCATION, cm.getLocation());
         result.put(CM_VOLUME, cm.getVolume());
         result.put(CM_PRIVATE, cm.isPrivate());
+        result.put(CM_LAT, cm.getLatitude());
+        result.put(CM_LONG, cm.getLongitude());
 
         return result;
     }
@@ -66,6 +68,8 @@ public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker
         result.setCurrentVolume(jo.getInt(CM_CURRENT_VOLUME));
         DateTime dt = ISODateTimeFormat.dateTime().parseDateTime(jo.getString(CM_CREATED));
         result.setCreatedAt(dt.toDate());
+        result.setLatitude(jo.getDouble(CM_LAT));
+        result.setLongitude(jo.getDouble(CM_LONG));
 
         return result;
     }

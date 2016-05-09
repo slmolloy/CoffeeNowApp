@@ -1,6 +1,8 @@
 package coffeenow.com.coffeenowapp.fragments;
 
 import android.content.Context;
+import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
@@ -25,6 +27,8 @@ public class FragmentAddCoffeeMaker extends Fragment {
     private RadioGroup mLocation;
     private TextView mVolume;
     private CheckBox mPrivate;
+
+    private Location mLastLocation = null;
 
     public FragmentAddCoffeeMaker() {
 
@@ -60,6 +64,10 @@ public class FragmentAddCoffeeMaker extends Fragment {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
+
+                    LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                    mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+
                     CoffeeMaker cm = new CoffeeMaker(mName.getText().toString());
                     switch (mLocation.getCheckedRadioButtonId()) {
                         case R.id.create_coffee_maker_location_home:
@@ -74,6 +82,8 @@ public class FragmentAddCoffeeMaker extends Fragment {
                     }
                     cm.setVolume(Integer.parseInt(mVolume.getText().toString()));
                     cm.setPrivate(mPrivate.isChecked());
+                    cm.setLatitude(mLastLocation.getLatitude());
+                    cm.setLongitude(mLastLocation.getLongitude());
 
                     AddCoffeeMakerTask task = new AddCoffeeMakerTask(mContext, cm);
                     task.execute(cm);
