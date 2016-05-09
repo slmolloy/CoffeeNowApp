@@ -1,6 +1,10 @@
 package coffeenow.com.coffeenowapp.models;
 
 public class User {
+    public static final String USER_ID = "_id";
+    public static final String USER_NAME = "name";
+    public static final String USER_EMAIL = "email";
+
     private String id;
     private String name;
     private String email;

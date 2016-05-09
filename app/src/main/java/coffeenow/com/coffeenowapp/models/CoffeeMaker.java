@@ -3,6 +3,16 @@ package coffeenow.com.coffeenowapp.models;
 import java.util.Date;
 
 public class CoffeeMaker {
+    public static final String CM_ID = "_id";
+    public static final String CM_NAME = "name";
+    public static final String CM_TOKEN = "token";
+    public static final String CM_LOCATION = "location";
+    public static final String CM_VOLUME = "volume";
+    public static final String CM_PRIVATE = "isPrivate";
+    public static final String CM_ON = "isOn";
+    public static final String CM_CURRENT_VOLUME = "currentVolume";
+    public static final String CM_CREATED = "createdAt";
+
     private String id;
     private String name;
     private String token;

@@ -13,4 +13,13 @@
 
     <string name="coffee_maker_message">Coffee makers!</string>
     <string name="user_message">Users with access</string>
+
+    <string name="create_coffee_maker_message">Add a new coffee maker</string>
+    <string name="label_coffee_maker_name">Name:</string>
+    <string name="label_coffee_maker_location">Location:</string>
+    <string name="label_coffee_maker_volume">Volume:</string>
+    <string name="label_coffee_maker_private">Private:</string>
+    <string name="label_coffee_maker_location_home">Home</string>
+    <string name="label_coffee_maker_location_office">Office</string>
+    <string name="label_coffee_maker_location_other">Other</string>
 </resources>

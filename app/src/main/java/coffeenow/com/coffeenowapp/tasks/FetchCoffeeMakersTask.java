@@ -21,6 +21,9 @@ import java.net.URL;
 
 import coffeenow.com.coffeenowapp.models.CoffeeMaker;
 
+import static coffeenow.com.coffeenowapp.models.CoffeeMaker.*;
+import static coffeenow.com.coffeenowapp.api.CoffeeNow.*;
+
 public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]> {
 
     private final String LOG_TAG = FetchCoffeeMakersTask.class.getSimpleName();
@@ -35,16 +38,6 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]
 
     private CoffeeMaker[] getCoffeeMakerDataFromJson(String jsonStr)
             throws JSONException {
-
-        final String CM_ID = "_id";
-        final String CM_NAME = "name";
-        final String CM_TOKEN = "token";
-        final String CM_LOCATION = "location";
-        final String CM_VOLUME = "volume";
-        final String CM_PRIVATE = "isPrivate";
-        final String CM_ON = "isOn";
-        final String CM_CURRENT_VOLUME = "currentVolume";
-        final String CM_CREATED = "createdAt";
 
         Log.v(LOG_TAG, "getCoffeeMakerDataFromJson: yippe!");
 
@@ -68,8 +61,7 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]
 
     @Override
     protected CoffeeMaker[] doInBackground(String... params) {
-        //final String COFFEE_MAKER_BASE_URL = "https://tranquil-lowlands-46896.herokuapp.com/api/v1/makers";
-        final String COFFEE_MAKER_BASE_URL = "http://10.0.2.2:3000/api/v1/makers";
+        final String COFFEE_MAKER_BASE_URL = API_BASE_URL + API_COFFEE_MAKERS;
 
         String jsonResponse;
 

@@ -6,6 +6,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.CoordinatorLayout;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -76,6 +77,16 @@ public class FragmentCoffeeMakers extends Fragment {
         FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
         if (fab != null) {
             fab.show();
+            fab.setImageDrawable(ContextCompat.getDrawable(mContext, R.drawable.ic_input_add));
+            fab.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    getFragmentManager().beginTransaction()
+                            .replace(R.id.content, new FragmentAddCoffeeMaker())
+                            .addToBackStack("add-coffee-maker")
+                            .commit();
+                }
+            });
         }
 
         View rootView = inflater.inflate(R.layout.fragment_coffee_makers, container, false);
@@ -90,7 +101,6 @@ public class FragmentCoffeeMakers extends Fragment {
 
         ListView listView = (ListView) rootView.findViewById(R.id.listview_coffeemakers);
         listView.setAdapter(mCoffeeMakerAdapter);
-
 
         return rootView;
     }

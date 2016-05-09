@@ -19,6 +19,9 @@ import java.net.URL;
 
 import coffeenow.com.coffeenowapp.models.User;
 
+import static coffeenow.com.coffeenowapp.models.User.*;
+import static coffeenow.com.coffeenowapp.api.CoffeeNow.*;
+
 public class FetchUsersTask extends AsyncTask<String, Void, User[]> {
 
     private final String LOG_TAG = FetchUsersTask.class.getSimpleName();
@@ -32,10 +35,6 @@ public class FetchUsersTask extends AsyncTask<String, Void, User[]> {
 
     private User[] getUsersDataFromJson(String jsonStr)
             throws JSONException {
-
-        final String USER_ID = "_id";
-        final String USER_NAME = "name";
-        final String USER_EMAIL = "email";
 
         JSONArray jsonArray = new JSONArray(jsonStr);
         User[] result = new User[jsonArray.length()];
@@ -52,7 +51,7 @@ public class FetchUsersTask extends AsyncTask<String, Void, User[]> {
     }
 
     protected User[] doInBackground(String... params) {
-        final String USERS_BASE_URL = "http://10.0.2.2:3000/api/v1/users";
+        final String USERS_BASE_URL = API_BASE_URL + API_USERS;
 
         String jsonResponse = "";
 
