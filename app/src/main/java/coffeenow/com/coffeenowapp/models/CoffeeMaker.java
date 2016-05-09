@@ -109,7 +109,11 @@ public class CoffeeMaker {
     }
 
     public void setLatitude(Double latitude) {
-        this.latitude = latitude;
+        if (latitude == null) {
+            this.latitude = 0.0;
+        } else {
+            this.latitude = latitude;
+        }
     }
 
     public Double getLongitude() {
@@ -117,13 +121,23 @@ public class CoffeeMaker {
     }
 
     public void setLongitude(Double longitude) {
-        this.longitude = longitude;
+        if (longitude == null) {
+            this.longitude = 0.0;
+        } else {
+            this.longitude = longitude;
+        }
     }
 
     @Override
     public String toString() {
-        return String.format(Locale.getDefault(),
-                "%s (%d cups) -- Lat: %.3f Long: %.3f",
-                getName(), getVolume(), getLatitude(), getLongitude());
+        if (getLatitude() == null || getLatitude() == 0.0 || getLongitude() == null || getLongitude() == 0.0) {
+            return String.format(Locale.getDefault(),
+                    "%s (%d cups)",
+                    getName(), getVolume());
+        } else {
+            return String.format(Locale.getDefault(),
+                    "%s (%d cups) -- Lat: %.3f Long: %.3f",
+                    getName(), getVolume(), getLatitude(), getLongitude());
+        }
     }
 }

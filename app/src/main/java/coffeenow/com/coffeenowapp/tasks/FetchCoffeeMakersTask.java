@@ -55,8 +55,10 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]
             result[i].setCurrentVolume(cm.getInt(CM_CURRENT_VOLUME));
             DateTime dt = ISODateTimeFormat.dateTime().parseDateTime(cm.getString(CM_CREATED));
             result[i].setCreatedAt(dt.toDate());
-            result[i].setLatitude(cm.getDouble(CM_LAT));
-            result[i].setLongitude(cm.getDouble(CM_LONG));
+            if (cm.has(CM_LAT) && cm.has(CM_LONG) && !cm.isNull(CM_LAT) && !cm.isNull(CM_LONG)) {
+                result[i].setLatitude(cm.getDouble(CM_LAT));
+                result[i].setLongitude(cm.getDouble(CM_LONG));
+            }
         }
         return result;
     }

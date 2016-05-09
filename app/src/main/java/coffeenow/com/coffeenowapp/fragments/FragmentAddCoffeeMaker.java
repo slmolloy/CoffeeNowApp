@@ -2,6 +2,7 @@ package coffeenow.com.coffeenowapp.fragments;
 
 import android.content.Context;
 import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -20,7 +21,8 @@ import coffeenow.com.coffeenowapp.R;
 import coffeenow.com.coffeenowapp.models.CoffeeMaker;
 import coffeenow.com.coffeenowapp.tasks.AddCoffeeMakerTask;
 
-public class FragmentAddCoffeeMaker extends Fragment {
+public class FragmentAddCoffeeMaker extends Fragment implements
+        LocationListener {
 
     private final String LOG_TAG = FragmentAddCoffeeMaker.class.getSimpleName();
     private Context mContext;
@@ -44,6 +46,14 @@ public class FragmentAddCoffeeMaker extends Fragment {
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+        try {
+            lm.requestLocationUpdates(LocationManager.GPS_PROVIDER, 5000, 1, this);
+            mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        } catch (SecurityException e) {
+            Log.e(LOG_TAG, "Error", e);
+        }
     }
 
     @Nullable
@@ -65,14 +75,6 @@ public class FragmentAddCoffeeMaker extends Fragment {
             fab.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-
-                    LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                    try {
-                        mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                    } catch (SecurityException e) {
-                        Log.e(LOG_TAG, "Error", e);
-                    }
-
                     CoffeeMaker cm = new CoffeeMaker(mName.getText().toString());
                     switch (mLocation.getCheckedRadioButtonId()) {
                         case R.id.create_coffee_maker_location_home:
@@ -100,5 +102,27 @@ public class FragmentAddCoffeeMaker extends Fragment {
         }
 
         return rootView;
+    }
+
+    @Override
+    public void onLocationChanged(Location location) {
+        if (location != null) {
+            mLastLocation = location;
+        }
+    }
+
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) {
+
+    }
+
+    @Override
+    public void onProviderEnabled(String provider) {
+
+    }
+
+    @Override
+    public void onProviderDisabled(String provider) {
+
     }
 }

@@ -68,8 +68,10 @@ public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker
         result.setCurrentVolume(jo.getInt(CM_CURRENT_VOLUME));
         DateTime dt = ISODateTimeFormat.dateTime().parseDateTime(jo.getString(CM_CREATED));
         result.setCreatedAt(dt.toDate());
-        result.setLatitude(jo.getDouble(CM_LAT));
-        result.setLongitude(jo.getDouble(CM_LONG));
+        if (jo.has(CM_LAT) && jo.has(CM_LONG)) {
+            result.setLatitude(jo.getDouble(CM_LAT));
+            result.setLongitude(jo.getDouble(CM_LONG));
+        }
 
         return result;
     }
