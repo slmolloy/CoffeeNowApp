@@ -8,6 +8,7 @@ import android.support.annotation.Nullable;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -66,7 +67,11 @@ public class FragmentAddCoffeeMaker extends Fragment {
                 public void onClick(View v) {
 
                     LocationManager lm = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-                    mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    try {
+                        mLastLocation = lm.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    } catch (SecurityException e) {
+                        Log.e(LOG_TAG, "Error", e);
+                    }
 
                     CoffeeMaker cm = new CoffeeMaker(mName.getText().toString());
                     switch (mLocation.getCheckedRadioButtonId()) {
@@ -82,8 +87,10 @@ public class FragmentAddCoffeeMaker extends Fragment {
                     }
                     cm.setVolume(Integer.parseInt(mVolume.getText().toString()));
                     cm.setPrivate(mPrivate.isChecked());
-                    cm.setLatitude(mLastLocation.getLatitude());
-                    cm.setLongitude(mLastLocation.getLongitude());
+                    if (mLastLocation != null) {
+                        cm.setLatitude(mLastLocation.getLatitude());
+                        cm.setLongitude(mLastLocation.getLongitude());
+                    }
 
                     AddCoffeeMakerTask task = new AddCoffeeMakerTask(mContext, cm);
                     task.execute(cm);
