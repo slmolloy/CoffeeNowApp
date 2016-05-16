@@ -1,5 +1,11 @@
+# Android Studio
 .idea
+*.iml
+
+# Gradle
 build/
 .gradle/
-*.iml
 local.properties
+
+# Gitbook
+_book/
