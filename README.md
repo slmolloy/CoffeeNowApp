@@ -1,4 +1,4 @@
-[![CircleCI](https://circleci.com/gh/slmolloy/CoffeeNowApp.svg?style=shield&circle-token=6247dd9cbff88cd694805f21eb38555d53ecc092)](https://circleci.com/gh/slmolloy/CoffeeNowApp)
+[![Build Status](https://travis-ci.com/slmolloy/CoffeeNowApp.svg?token=QoxmaVRzqqQgrV54zrVj&branch=master)](https://travis-ci.com/slmolloy/CoffeeNowApp)
 
 # CoffeeNowApp
 The CoffeeNowApp is a simple Android app that allows users to view and add
