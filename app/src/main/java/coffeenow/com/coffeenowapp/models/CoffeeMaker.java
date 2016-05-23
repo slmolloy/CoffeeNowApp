@@ -136,7 +136,7 @@ public class CoffeeMaker {
                     getName(), getVolume());
         } else {
             return String.format(Locale.getDefault(),
-                    "%s (%d cups) -- Lat: %.3f Long: %.3f",
+                    "%s (%d cups) -- Lat: %.4f Long: %.4f",
                     getName(), getVolume(), getLatitude(), getLongitude());
         }
     }
