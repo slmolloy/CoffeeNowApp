@@ -26,6 +26,7 @@ cache:
   - $HOME/.gradle/caches
   - $HOME/.gradle/wrapper
 install:
+- ./gradlew lintDebug
 - ./gradlew testDebug
 before_script:
 - export ANDROID_HOME=/usr/local/android-sdk

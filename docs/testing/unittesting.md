@@ -50,3 +50,21 @@ public class UserModelTest {
     }
 }
 ```
+
+# Unit Test Results
+When working with an Android Studio project, unit tests can be run through the
+IDE or on the command line with:
+```bash
+./gradlew test
+```
+The unit test results will be located at: ```app/build/test-results/debug/```
+Test results will appear in an xml format like:
+```xml
+<?xml version="1.0" encoding="UTF-8"?>
+<testsuite name="coffeenow.com.coffeenowapp.CoffeeMakerModelTest" tests="1" skipped="0" failures="0" errors="0" timestamp="2016-05-22T23:17:48" hostname="slmolloy-home" time="0.001">
+  <properties/>
+  <testcase name="coffeeMakerDisplay" classname="coffeenow.com.coffeenowapp.CoffeeMakerModelTest" time="0.001"/>
+  <system-out><![CDATA[]]></system-out>
+  <system-err><![CDATA[]]></system-err>
+</testsuite>
+```
