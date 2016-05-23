@@ -9,6 +9,5 @@
     * [Unit Testing](docs/testing/unittesting.md)
     * [Espresso Testing](docs/testing/espressotesting.md)
 * [Extras](docs/extras/extra.md)
-    * [Android SDK and CLI](docs/extras/androidsdkcli.md)
     * [GitBook](docs/extras/gitbook.md)
 * [Resources](docs/resources.md)
