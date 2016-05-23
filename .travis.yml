@@ -10,5 +10,9 @@ android:
   - extra-android-m2repository
   licenses:
   - android-sdk-license-.+
+cache:
+  directories:
+  - $HOME/.gradle/caches
+  - $HOME/.gradle/wrapper
 script:
 - ./gradlew testDebug
