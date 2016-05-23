@@ -25,26 +25,26 @@ cache:
   directories:
   - $HOME/.gradle/caches
   - $HOME/.gradle/wrapper
-before_script:
-- export ANDROID_HOME=/usr/local/android-sdk
-- export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
-- echo no | android create avd --force -n test -t android-23 --abi armeabi-v7a
-- emulator -avd test -no-skin -no-audio -no-window &
-- android-wait-for-emulator
+#before_script:
+#- export ANDROID_HOME=/usr/local/android-sdk
+#- export PATH=${PATH}:${ANDROID_HOME}/tools:${ANDROID_HOME}/platform-tools
+#- echo no | android create avd --force -n test -t android-23 --abi armeabi-v7a
+#- emulator -avd test -no-skin -no-audio -no-window &
+#- android-wait-for-emulator
 script:
 - ./gradlew lintDebug
 - ./gradlew testDebug
-- ./gradlew installDebugAndroidTest
-- adb shell input keyevent 82 &
-- ./gradlew connectedDebugAndroidTest
+#- ./gradlew installDebugAndroidTest
+#- adb shell input keyevent 82 &
+#- ./gradlew connectedDebugAndroidTest
 addons:
   artifacts:
     debug: false
     s3_region: us-west-2
     paths:
     - ./app/build/outputs/apk/app-debug.apk
-    - ./app/build/reports/androidTests/connected
+#    - ./app/build/reports/androidTests/connected
+#    - ./app/build/outputs/androidTest-results
     - ./app/build/outputs/lint-results-debug_files
     - ./app/build/outputs/lint-results-debug.html
-    - ./app/build/outputs/androidTest-results
     - ./app/build/test-results/debug
