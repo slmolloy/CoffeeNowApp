@@ -58,15 +58,8 @@ android:
   # Add system image to the end of your components list
   - sys-img-armeabi-v7a-android-23
 ```
-Rename the existing script configuration to install, it will follow directly
-after the android.licenses configuration and look like:
-```yaml
-install:
-- ./gradle testDebug
-```
-The install configuration gets run before the script configuration. We will now
-create a before_script configuration that is reponsible for creating and
-launching the AVD. Right after install add:
+Create a before_script configuration that is responsible for creating and
+launching the AVD. Add the before_script right before the script config.
 ```yaml
 before_script:
 - export ANDROID_HOME=/usr/local/android-sdk
@@ -89,31 +82,34 @@ slow. It can take 2-4 minutes for the emulator to book. While it is booting
 a message will be displayed to the build logs.
 
 ## Running Android UI Tests
-With an AVD running the Android UI test execution can start. Add a script
-configuration after the before_script:
+We will now have an AVD running when we get to the script. Add additional steps
+to the script config to run the Android UI tests.
 ```yaml
 script:
+- ./gradlew testDebug
 - ./gradlew installDebugAndroidTest
 - adb shell input keyevent 82 &
 - ./gradlew connectedDebugAndroidTest
 ```
-The first step is to install the Android debug test apk. If multiple emulators
-were running then the apk would be installed on all of them. After the install
-is completed the adb shell command sends the menu press keyevent to the
-emulator to wake the device up. This is useful as the install process may take
-long enough that the device will go back to sleep. Now that the device is awake
-the connectedDebugAndroidTest task can start to run the Android UI tests on all
-connected emulators. This task will download the test results from the devices
-it runs on.
+After running the unit tests test the testDebug task, the
+installDebugAndroidTest task will install the test apk on the running emulator.
+The install task make take long enough to complete that the device returns to
+low power sleep mode. The key event 82 sends the menu button press event which
+will wake the device. At this point the connectedDebugAndroidTest task can be
+run to complete the Android UI testing. Note that the installDebugAndroidTest
+and connectedDebugAndroidTest tasks will operate on all devices connected. This
+is a powerful way to test changes across multiple devices at once.
 
 # Running Lint Check
-Adding support for lint checks is quite simple. Lint is useful code checker
+Adding support for lint checks is quite simple. Lint is a useful code checker
 that should be used on all projects. To setup lint checks you can add it to the
-install config like so:
+script config like so:
 ```yaml
-install:
-- ./gradlew lintDebug
+script:
 - ./gradlew testDebug
+- ./gradlew installDebugAndroidTest
+- adb shell input keyevent 82 &
+- ./gradlew connectedDebugAndroidTest
 ```
 
 # Speeding Things Up
@@ -144,7 +140,7 @@ configuration can now be updated to push changes to S3.
 ## Setup Environment Variables
 To setup Amazon S3 we need to configure a few environment variables to identify
 our bucket and provide the credentials to upload artifacts.
-After the android config and before the install config add an env section like
+After the android config and before the before_script config add an env section like
 so:
 ```yaml
 env:
