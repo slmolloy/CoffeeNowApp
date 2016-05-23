@@ -17,6 +17,6 @@ public class CoffeeMakerModelTest {
 
         cm.setLatitude(0.1);
         cm.setLongitude(0.1);
-        assertEquals("test (1 cups) -- Lat: 0.100 Long: 0.100", cm.toString());
+        assertEquals("test (1 cups) -- Lat: 0.1000 Long: 0.1000", cm.toString());
     }
 }
