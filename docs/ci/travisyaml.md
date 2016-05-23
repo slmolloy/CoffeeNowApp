@@ -74,7 +74,6 @@ before_script:
 - echo no | android create avd --force -n test -t android-23 --abi armeabi-v7a
 - emulator -avd test -no-skin -no-audio -no-window &
 - android-wait-for-emulator
-- adb shell input keyevent 82 &
 ```
 There is a lot going on here. The first two lines setup our PATH to include
 the paths to the Android tools directories where commands like adb, android and
@@ -87,19 +86,25 @@ can be found on [github](https://github.com/travis-ci/travis-cookbooks/blob/mast
 The android-wait-for-emulator command take a very long time to complete. At
 this time the x86 emulators do not work and the ARM emulators are extremely
 slow. It can take 2-4 minutes for the emulator to book. While it is booting
-a message will be displayed to the build logs. The adb shell command sends a
-menu key event to the device in order to wakeup the screen.
+a message will be displayed to the build logs.
 
 ## Running Android UI Tests
-With an AVD running and awake the Android UI test execution can start. Add a
-script configuration after the before_script:
+With an AVD running the Android UI test execution can start. Add a script
+configuration after the before_script:
 ```yaml
 script:
-- ./gradlew connectedAndroidTest
+- ./gradlew installDebugAndroidTest
+- adb shell input keyevent 82 &
+- ./gradlew connectedDebugAndroidTest
 ```
-The connectedAndroidTest task will build and install the apk on all connected
-devices, in our case, the one AVD. The task then executes all Android UI tests
-and downloads the results from the tests.
+The first step is to install the Android debug test apk. If multiple emulators
+were running then the apk would be installed on all of them. After the install
+is completed the adb shell command sends the menu press keyevent to the
+emulator to wake the device up. This is useful as the install process may take
+long enough that the device will go back to sleep. Now that the device is awake
+the connectedDebugAndroidTest task can start to run the Android UI tests on all
+connected emulators. This task will download the test results from the devices
+it runs on.
 
 # Running Lint Check
 Adding support for lint checks is quite simple. Lint is useful code checker
@@ -135,8 +140,50 @@ and the apk could be signed and sent to the Google Play Store for release.
 
 Based on the earlier guide for settings up an Amazon S3 bucket, the Travis CI
 configuration can now be updated to push changes to S3.
-# Secure Environment Variables
-```bash
-travis encrypt ARTIFACTS_AWS_ACCESS_KEY_ID=abc123 -r slmolloy/CoffeeNowApp
-travis encrypt ARTIFACTS_AWS_SECRET_ACCESS_KEY=abc123 -r slmolloy/CoffeeNowApp
+
+## Setup Environment Variables
+To setup Amazon S3 we need to configure a few environment variables to identify
+our bucket and provide the credentials to upload artifacts.
+After the android config and before the install config add an env section like
+so:
+```yaml
+env:
+  global:
+  - ARTIFACTS_BUCKET=sunshineartifacts
 ```
+The Amazon S3 credentials are needed too but they should not be added to the
+```.travis.yml``` file in plain text. This is were the earlier installed travis
+cli tool comes to play. Open a terminal and navigate to the root of the git
+repository where the ```.travis.yml``` file is located. Run the following
+commands to add encrypted environment variables to the travis configuration.
+Replace the values for your specific configuration:
+```bash
+travis encrypt ARTIFACTS_KEY=YOUR_AWS_KEY -r YOUR_GITHUB_USERID/YOUR_GITHUB_PROJECT --add
+travis encrypt ARTIFACTS_SECRET=YOUR_AWS_KEY_SECRET -r YOUR_GITHUB_USERID/YOUR_GITHUB_PROJECT --add
+```
+The ```--add``` flag will write the encrypted values to your ```.travis.yml```
+file for you.
+
+## Configure Artifacts Addon
+The final step to getting artifacts pushed to S3 is to include the rules for
+what to push to S3. At the very end of your travis config file add the
+following rules:
+```yaml
+addons:
+  artifacts:
+    debug: false
+    s3_region: us-west-2
+    paths:
+    - ./app/build/outputs/apk/app-debug.apk
+    - ./app/build/reports/androidTests/connected
+    - ./app/build/outputs/lint-results-debug_files
+    - ./app/build/outputs/lint-results-debug.html
+    - ./app/build/outputs/androidTest-results
+    - ./app/build/test-results/debug
+```
+The s3_region may need to change depending on where the S3 bucket was setup.
+This bucket was setup in the Oregon (us-west-2) region.
+
+Now build artifacts will be published to Amazon S3 and can be viewed online.
+The process of posting the artifact url back to Github is complex and not
+covered by this tutorial.

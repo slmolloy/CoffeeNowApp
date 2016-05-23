@@ -11,6 +11,11 @@ android:
   - sys-img-armeabi-v7a-android-23
   licenses:
   - android-sdk-license-.+
+env:
+  global:
+  - ARTIFACTS_BUCKET=coffeenowappartifacts
+  - secure: hsdSDljVNkIoBLfl8Taybf6GRELkZCB/IgYi9NC+R+gcz9wp9eSyueJfKQSyuEbCOmgKhEmlLriYSOviPDt+8xc7Gfqt5LZjeof4jxi4VkZuC59/hzoOIbel0+I18V3rfH8DDU9lhMUC55mBzP3IkJkIC9Ko3DK1J/BIZAfKVCdN9pxEoJ4ak/INH4GVY2n3G0IIRJBXW0Iu8NcXms6CF1UVO1kBcSTx7i5VBuAnzQ7hRCfzYzgycNBSxOL+oUX/kx5ejhIutFmsvYy6rpOwI34+hR4z282BcSpYht2XXxKXLiI1k71Q0heRnAlY4CuabSjdjYOQ0JEIpUd7KNwC5sXh6ECpBE8MbxsvVmU2blz+yj/Pfy4k3FNuzmo0zObaKPwDuzfumakbqzB/Esg5e6DXsRu1+IPHzZ0BmWciuo9lJJpFsPnRgn8rCe2WjyN9HlSqoglMlgFzqp/5gFVAqawHBv1loz/h7uiJlLwQ2WrTSSlNcW5fpfHsG+JMZBgmrlltcYBjzoXbIVJuw+mpzh8RJXZ7f3X6dyAZZIpWoj4kyAD5SvKZqXXy/V2jCwe0v/DY/p0mctfRMe/fACBFQmWXB1j3nRF4bOqg4kuoLPMyz+aQDC+RzgIX+qKmNfayZTK0eRcd69ueVTirg+cmbevicMEQxyJwncahAC3Wi4M=
+  - secure: HW/sIvx3QpLPbhzBsdG4+C7CN/SoDg0HEzPHF0JrTdntwCNhxbv5HP9CYj4tw97cWbL6HFKmZzpPIE8tMmhPTx6gjfM9nBVPYaHTHtcn8ixRnxT3Y3WeTGeL2E8rQV239qAtaLNUBfV69V5yMQVfE7od0gBzzvXrSEddGGoJdJ6fphOi3hRKj1pdd9q1PvqU1+b3vaVELjK5W1Z0HUdXLFlk0WgOJWDH/Q8BuMrcOJcBKmL6lTjgOwCh9z+cre8lrwpVbRjcXdG1hvCU0k+/0dyNBDXOXp/zYKVCRexURYwdhiIS0I5XApgAyKE721n8rgHcgEPeZWDVldbRMWUBxPCjdNHNf4LBVf0wCQ4EnGL1IXRra2UApRFwkJhkJxPwybYs3axynB+DihSwmeRx+eIRmPCYrUYhcAH0Gi29lzJZ8XIVqMubRCNPKoZ3cfnxm5GtctXkv9hXiFG9du+9DPOtJfp34tb+M3L6zktDG0XtGM+hRxfKIiRfZwmEhm2OZi3XOTBlDJOIvJBTpsVt0XK67noPR71ytrJXjeqnyBh7GmeDM0mPhKG941vIH4OXch+h9IdxUf5P9BLk55jczTqSeZ+JiXCIEEu08jwvTXsWSlaYzRovc9yQQayZcIgSRtRkcrmaZqN9xn4flzYh7qfvC2plz14cE7adzB/1pFU=
 before_cache:
 - rm -f $HOME/.gradle/caches/*/*.lock
 - rm -f $HOME/.gradle/caches/2.10/classAnalysis/classAnalysis.bin
@@ -27,6 +32,18 @@ before_script:
 - echo no | android create avd --force -n test -t android-23 --abi armeabi-v7a
 - emulator -avd test -no-skin -no-audio -no-window &
 - android-wait-for-emulator
-- adb shell input keyevent 82 &
 script:
-- ./gradlew connectedAndroidTest
+- ./gradlew installDebugAndroidTest
+- adb shell input keyevent 82 &
+- ./gradlew connectedDebugAndroidTest
+addons:
+  artifacts:
+    debug: false
+    s3_region: us-west-2
+    paths:
+    - ./app/build/outputs/apk/app-debug.apk
+    - ./app/build/reports/androidTests/connected
+    - ./app/build/outputs/lint-results-debug_files
+    - ./app/build/outputs/lint-results-debug.html
+    - ./app/build/outputs/androidTest-results
+    - ./app/build/test-results/debug
