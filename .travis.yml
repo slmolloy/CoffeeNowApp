@@ -18,6 +18,7 @@ env:
   - secure: HW/sIvx3QpLPbhzBsdG4+C7CN/SoDg0HEzPHF0JrTdntwCNhxbv5HP9CYj4tw97cWbL6HFKmZzpPIE8tMmhPTx6gjfM9nBVPYaHTHtcn8ixRnxT3Y3WeTGeL2E8rQV239qAtaLNUBfV69V5yMQVfE7od0gBzzvXrSEddGGoJdJ6fphOi3hRKj1pdd9q1PvqU1+b3vaVELjK5W1Z0HUdXLFlk0WgOJWDH/Q8BuMrcOJcBKmL6lTjgOwCh9z+cre8lrwpVbRjcXdG1hvCU0k+/0dyNBDXOXp/zYKVCRexURYwdhiIS0I5XApgAyKE721n8rgHcgEPeZWDVldbRMWUBxPCjdNHNf4LBVf0wCQ4EnGL1IXRra2UApRFwkJhkJxPwybYs3axynB+DihSwmeRx+eIRmPCYrUYhcAH0Gi29lzJZ8XIVqMubRCNPKoZ3cfnxm5GtctXkv9hXiFG9du+9DPOtJfp34tb+M3L6zktDG0XtGM+hRxfKIiRfZwmEhm2OZi3XOTBlDJOIvJBTpsVt0XK67noPR71ytrJXjeqnyBh7GmeDM0mPhKG941vIH4OXch+h9IdxUf5P9BLk55jczTqSeZ+JiXCIEEu08jwvTXsWSlaYzRovc9yQQayZcIgSRtRkcrmaZqN9xn4flzYh7qfvC2plz14cE7adzB/1pFU=
 before_cache:
 - rm -f $HOME/.gradle/caches/*/*.lock
+- rm -f $HOME/.gradle/caches/*/*/*.lock
 - rm -f $HOME/.gradle/caches/2.10/classAnalysis/classAnalysis.bin
 - rm -f $HOME/.gradle/caches/2.10/jarSnapshots/jarSnapshots.bin
 cache:
