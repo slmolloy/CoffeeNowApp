@@ -43,4 +43,6 @@ addons:
     debug: false
     s3_region: us-west-2
     paths:
-    - ./app/build
+    - ./app/build/outputs
+    - ./app/build/reports
+    - ./app/build/test-results
