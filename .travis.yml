@@ -43,9 +43,4 @@ addons:
     debug: false
     s3_region: us-west-2
     paths:
-    - ./app/build/outputs/apk/app-debug.apk
-#    - ./app/build/reports/androidTests/connected
-#    - ./app/build/outputs/androidTest-results
-    - ./app/build/outputs/lint-results-debug_files
-    - ./app/build/outputs/lint-results-debug.html
-    - ./app/build/test-results/debug
+    - ./app/build
