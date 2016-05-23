@@ -123,7 +123,7 @@ cache:
   - $HOME/.gradle/wrapper
 ```
 For a simple build that only included build and unit tests the total build time
-went from 2:15 to 1:50.
+went from 2:15 to 1:50 with these caches enabled.
 
 # Publish Artifacts to Amazon S3
 Builds in Travis CI can produce a lot of useful information. The build is now
