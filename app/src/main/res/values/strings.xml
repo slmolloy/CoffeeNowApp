@@ -22,4 +22,7 @@
     <string name="label_coffee_maker_location_home">Home</string>
     <string name="label_coffee_maker_location_office">Office</string>
     <string name="label_coffee_maker_location_other">Other</string>
+
+    <string name="login_username">Username:</string>
+    <string name="login_password">Password:</string>
 </resources>
