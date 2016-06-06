@@ -1,14 +1,23 @@
 package coffeenow.com.coffeenowapp.fragments;
 
 import android.content.Context;
-import android.net.Uri;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
+import android.support.design.widget.FloatingActionButton;
 import android.support.v4.app.Fragment;
+import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
+import coffeenow.com.coffeenowapp.CoffeeNowApp;
 import coffeenow.com.coffeenowapp.R;
+import coffeenow.com.coffeenowapp.tasks.LoginTask;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -18,10 +27,19 @@ import coffeenow.com.coffeenowapp.R;
  * Use the {@link FragmentLogin#newInstance} factory method to
  * create an instance of this fragment.
  */
-public class FragmentLogin extends Fragment {
-    // TODO: Rename parameter arguments, choose names that match
+public class FragmentLogin extends Fragment implements LoginTask.OnTaskComplete {
 
+    private static final String LOG_TAG = FragmentLogin.class.getSimpleName();
     private OnFragmentInteractionListener mListener;
+    private static LoginTask.OnTaskComplete mLoginTask;
+    private View mRootView;
+    private TextView mUsername;
+    private TextView mPassword;
+    private Button mLogin;
+
+    private DrawerLayout mDrawerLayout;
+    private Toolbar mToolbar;
+    private Drawable mNavIcon;
 
     public FragmentLogin() {
         // Required empty public constructor
@@ -46,15 +64,38 @@ public class FragmentLogin extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_login, container, false);
-    }
+        mRootView = inflater.inflate(R.layout.fragment_login, container, false);
+        mUsername = (TextView) mRootView.findViewById(R.id.login_username);
+        mPassword = (TextView) mRootView.findViewById(R.id.login_password);
+        mLogin = (Button) mRootView.findViewById(R.id.login_button);
 
-    // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
-        if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+        FloatingActionButton fab = (FloatingActionButton) getActivity().findViewById(R.id.fab);
+        if (fab != null) {
+            fab.hide();
         }
+
+        mDrawerLayout = (DrawerLayout) getActivity().findViewById(R.id.drawer_layout);
+        if (mDrawerLayout != null) {
+            mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_LOCKED_CLOSED);
+        }
+
+        mToolbar = (Toolbar) getActivity().findViewById(R.id.toolbar);
+        if (mToolbar != null) {
+            mNavIcon = mToolbar.getNavigationIcon();
+            mToolbar.setNavigationIcon(null);
+        }
+
+
+        mLoginTask = this;
+        mLogin.setOnClickListener(new Button.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LoginTask task = new LoginTask(mLoginTask, ((CoffeeNowApp) getContext().getApplicationContext()).getUser());
+                task.execute(mUsername.getText().toString().trim(), mPassword.getText().toString().trim());
+            }
+        });
+
+        return mRootView;
     }
 
     @Override
@@ -85,7 +126,21 @@ public class FragmentLogin extends Fragment {
      * >Communicating with Other Fragments</a> for more information.
      */
     public interface OnFragmentInteractionListener {
-        // TODO: Update argument type and name
-        void onFragmentInteraction(Uri uri);
+        void onLoginDone();
+    }
+
+    @Override
+    public void onLoginComplete(boolean successful) {
+        if (successful) {
+            if (mDrawerLayout != null) {
+                mDrawerLayout.setDrawerLockMode(DrawerLayout.LOCK_MODE_UNLOCKED);
+            }
+            if (mToolbar != null && mNavIcon != null) {
+                mToolbar.setNavigationIcon(mNavIcon);
+            }
+            mListener.onLoginDone();
+        } else {
+            Toast.makeText(getActivity(), "Login failed", Toast.LENGTH_LONG).show();
+        }
     }
 }

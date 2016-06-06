@@ -19,14 +19,17 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import coffeenow.com.coffeenowapp.CoffeeNowApp;
+import coffeenow.com.coffeenowapp.helpers.ApiHelper;
 import coffeenow.com.coffeenowapp.models.CoffeeMaker;
+import coffeenow.com.coffeenowapp.models.User;
 
 import static coffeenow.com.coffeenowapp.models.CoffeeMaker.*;
 import static coffeenow.com.coffeenowapp.api.CoffeeNow.*;
 
 public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker> {
 
-    private final String LOG_TAG = AddCoffeeMakerTask.class.getSimpleName();
+    private static final String LOG_TAG = AddCoffeeMakerTask.class.getSimpleName();
     private final Context mContext;
     private final CoffeeMaker mCoffeeMaker;
 
@@ -69,8 +72,13 @@ public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker
         DateTime dt = ISODateTimeFormat.dateTime().parseDateTime(jo.getString(CM_CREATED));
         result.setCreatedAt(dt.toDate());
         if (jo.has(CM_LAT) && jo.has(CM_LONG)) {
-            result.setLatitude(jo.getDouble(CM_LAT));
-            result.setLongitude(jo.getDouble(CM_LONG));
+            try {
+                result.setLatitude(jo.getDouble(CM_LAT));
+                result.setLongitude(jo.getDouble(CM_LONG));
+            } catch (JSONException e) {
+                result.setLatitude(0.0);
+                result.setLongitude(0.0);
+            }
         }
 
         return result;
@@ -80,12 +88,9 @@ public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker
     protected CoffeeMaker doInBackground(CoffeeMaker... params) {
         final String COFFEE_MAKER_BASE_URL = API_BASE_URL + API_COFFEE_MAKERS;
 
+        User user = ((CoffeeNowApp) mContext.getApplicationContext()).getUser();
         String jsonResponse = null;
         JSONObject jsonObject = null;
-
-        HttpURLConnection connection = null;
-        DataOutputStream output = null;
-        BufferedReader reader = null;
 
         try {
             jsonObject = getCoffeeMakerJsonFromObject(params[0]);
@@ -95,58 +100,7 @@ public class AddCoffeeMakerTask extends AsyncTask<CoffeeMaker, Void, CoffeeMaker
             return null;
         }
 
-        try {
-            Uri buildUri = Uri.parse(COFFEE_MAKER_BASE_URL).buildUpon().build();
-            URL url = new URL(buildUri.toString());
-
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setDoInput(true);
-            connection.setDoOutput(true);
-            connection.setUseCaches(false);
-            connection.setRequestProperty("Content-Type", "application/json");
-            connection.connect();
-            output = new DataOutputStream(connection.getOutputStream());
-            output.writeBytes(jsonObject.toString());
-            output.flush();
-            output.close();
-
-            int HttpResult = connection.getResponseCode();
-            if (HttpResult == HttpURLConnection.HTTP_OK) {
-                InputStream stream = connection.getInputStream();
-                if (stream == null) {
-                    return null;
-                }
-                reader = new BufferedReader(new InputStreamReader(stream));
-
-                StringBuffer buffer = new StringBuffer();
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    buffer.append(line + "\n");
-                }
-
-                if (buffer.length() == 0) {
-                    return null;
-                }
-
-                jsonResponse = buffer.toString();
-            }
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error", e);
-
-            return null;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error closing reader", e);
-                }
-            }
-        }
+        jsonResponse = ApiHelper.callApi(COFFEE_MAKER_BASE_URL, "POST", user, jsonObject);
 
         try {
             return getCoffeeMakerObjectFromJson(jsonResponse);

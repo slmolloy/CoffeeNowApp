@@ -33,7 +33,7 @@ import coffeenow.com.coffeenowapp.tasks.FetchUsersTask;
  */
 public class FragmentUsers extends Fragment {
 
-    private final String LOG_TAG = FragmentUsers.class.getSimpleName();
+    private static final String LOG_TAG = FragmentUsers.class.getSimpleName();
     private ArrayAdapter<User> mUsersAdapter;
     private Context mContext;
 

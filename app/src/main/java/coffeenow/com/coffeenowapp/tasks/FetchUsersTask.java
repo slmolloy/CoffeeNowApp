@@ -17,6 +17,8 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import coffeenow.com.coffeenowapp.CoffeeNowApp;
+import coffeenow.com.coffeenowapp.helpers.ApiHelper;
 import coffeenow.com.coffeenowapp.models.User;
 
 import static coffeenow.com.coffeenowapp.models.User.*;
@@ -24,7 +26,7 @@ import static coffeenow.com.coffeenowapp.api.CoffeeNow.*;
 
 public class FetchUsersTask extends AsyncTask<String, Void, User[]> {
 
-    private final String LOG_TAG = FetchUsersTask.class.getSimpleName();
+    private static final String LOG_TAG = FetchUsersTask.class.getSimpleName();
     private ArrayAdapter<User> mUsersAdapter;
     private final Context mContext;
 
@@ -43,8 +45,7 @@ public class FetchUsersTask extends AsyncTask<String, Void, User[]> {
             JSONObject user = jsonArray.getJSONObject(i);
             result[i] = new User(
                     user.getString(USER_ID),
-                    user.getString(USER_NAME),
-                    user.getString(USER_EMAIL));
+                    user.getString(USER_NAME));
         }
 
         return result;
@@ -55,48 +56,9 @@ public class FetchUsersTask extends AsyncTask<String, Void, User[]> {
 
         String jsonResponse = "";
 
-        HttpURLConnection connection = null;
-        BufferedReader reader = null;
+        User user = ((CoffeeNowApp) mContext.getApplicationContext()).getUser();
 
-        try {
-            Uri buildUri = Uri.parse(USERS_BASE_URL).buildUpon().build();
-            URL url = new URL(buildUri.toString());
-
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            InputStream stream = connection.getInputStream();
-            if (stream == null) {
-                return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(stream));
-
-            StringBuffer buffer = new StringBuffer();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-                return null;
-            }
-
-            jsonResponse = buffer.toString();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error", e);
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error closing reader", e);
-                }
-            }
-        }
+        jsonResponse = ApiHelper.callApi(USERS_BASE_URL, "GET", user, null);
 
         try {
             return getUsersDataFromJson(jsonResponse);

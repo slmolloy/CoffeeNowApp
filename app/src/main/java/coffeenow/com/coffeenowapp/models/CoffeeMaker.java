@@ -15,6 +15,8 @@ public class CoffeeMaker {
     public static final String CM_CREATED = "createdAt";
     public static final String CM_LAT = "latitude";
     public static final String CM_LONG = "longitude";
+    public static final String CM_OWNER = "owner";
+    public static final String CM_USERNAME = "username";
 
     private String id;
     private String name;
@@ -27,6 +29,8 @@ public class CoffeeMaker {
     private Date createdAt;
     private Double latitude;
     private Double longitude;
+    private String owner;
+    private String username;
 
     public CoffeeMaker(String name) {
         this.name = name;
@@ -116,6 +120,22 @@ public class CoffeeMaker {
         }
     }
 
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
     public Double getLongitude() {
         return longitude;
     }
@@ -132,12 +152,12 @@ public class CoffeeMaker {
     public String toString() {
         if (getLatitude() == null || getLatitude() == 0.0 || getLongitude() == null || getLongitude() == 0.0) {
             return String.format(Locale.getDefault(),
-                    "%s (%d cups)",
-                    getName(), getVolume());
+                    "%s's %s (%d cups)",
+                    getUsername(), getName(), getVolume());
         } else {
             return String.format(Locale.getDefault(),
-                    "%s (%d cups) -- Lat: %.4f Long: %.4f",
-                    getName(), getVolume(), getLatitude(), getLongitude());
+                    "%s's %s (%d cups) -- Lat: %.4f Long: %.4f",
+                    getUsername(), getName(), getVolume(), getLatitude(), getLongitude());
         }
     }
 }

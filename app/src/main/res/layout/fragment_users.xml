@@ -11,7 +11,9 @@
         android:layout_height="wrap_content"
         android:text="@string/user_message"
         android:textSize="18sp"
-        android:textStyle="bold" />
+        android:textStyle="bold"
+        android:layout_marginTop="@dimen/activity_vertical_margin"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"/>
 
     <ListView
         android:id="@+id/listview_users"

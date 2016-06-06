@@ -24,7 +24,7 @@ import coffeenow.com.coffeenowapp.tasks.AddCoffeeMakerTask;
 public class FragmentAddCoffeeMaker extends Fragment implements
         LocationListener {
 
-    private final String LOG_TAG = FragmentAddCoffeeMaker.class.getSimpleName();
+    private static final String LOG_TAG = FragmentAddCoffeeMaker.class.getSimpleName();
     private Context mContext;
     private TextView mName;
     private RadioGroup mLocation;

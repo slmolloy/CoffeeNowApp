@@ -10,8 +10,8 @@ public class UserModelTest {
 
     @Test
     public void userDisplayTest() {
-        User user = new User("123", "Joe", "joe@email.com");
+        User user = new User("123", "Joe");
 
-        assertEquals("Joe (joe@email.com)", user.toString());
+        assertEquals("Joe", user.toString());
     }
 }

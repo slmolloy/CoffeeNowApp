@@ -2,17 +2,22 @@ package coffeenow.com.coffeenowapp.models;
 
 public class User {
     public static final String USER_ID = "_id";
-    public static final String USER_NAME = "name";
-    public static final String USER_EMAIL = "email";
+    public static final String USER_NAME = "username";
+    public static final String USER_PASSWORD = "password";
+    public static final String USER_AUTH_DATA = "data";
+    public static final String USER_AUTH_ID = "userId";
+    public static final String USER_AUTH_TOKEN = "authToken";
+
 
     private String id;
-    private String name;
-    private String email;
+    private String username;
+    private String authToken;
 
-    public User(String id, String name, String email) {
+    public User() { }
+
+    public User(String id, String name) {
         this.id = id;
-        this.name = name;
-        this.email = email;
+        this.username = name;
     }
 
     public String getId() {
@@ -23,24 +28,24 @@ public class User {
         this.id = id;
     }
 
-    public String getName() {
-        return name;
+    public String getUsername() {
+        return username;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setUsername(String username) {
+        this.username = username;
     }
 
-    public String getEmail() {
-        return email;
+    public String getAuthToken() {
+        return authToken;
     }
 
-    public void setEmail(String email) {
-        this.email = email;
+    public void setAuthToken(String authToken) {
+        this.authToken = authToken;
     }
 
     @Override
     public String toString() {
-        return getName() + " (" + getEmail() + ")";
+        return getUsername();
     }
 }

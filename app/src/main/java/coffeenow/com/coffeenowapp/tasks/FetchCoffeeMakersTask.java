@@ -3,6 +3,7 @@ package coffeenow.com.coffeenowapp.tasks;
 import android.content.Context;
 import android.net.Uri;
 import android.os.AsyncTask;
+import android.text.TextUtils;
 import android.util.Log;
 import android.widget.ArrayAdapter;
 
@@ -19,27 +20,35 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
+import coffeenow.com.coffeenowapp.CoffeeNowApp;
+import coffeenow.com.coffeenowapp.helpers.ApiHelper;
 import coffeenow.com.coffeenowapp.models.CoffeeMaker;
+import coffeenow.com.coffeenowapp.models.User;
 
 import static coffeenow.com.coffeenowapp.models.CoffeeMaker.*;
 import static coffeenow.com.coffeenowapp.api.CoffeeNow.*;
 
 public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]> {
 
-    private final String LOG_TAG = FetchCoffeeMakersTask.class.getSimpleName();
+    private static final String LOG_TAG = FetchCoffeeMakersTask.class.getSimpleName();
 
     private ArrayAdapter<CoffeeMaker> mCoffeeMakerAdapter;
     private final Context mContext;
+    private boolean mMineOnly;
 
-    public FetchCoffeeMakersTask(Context context, ArrayAdapter<CoffeeMaker> coffeeMakerAdapter) {
+    public FetchCoffeeMakersTask(Context context, ArrayAdapter<CoffeeMaker> coffeeMakerAdapter, boolean showAll) {
         mContext = context;
         mCoffeeMakerAdapter = coffeeMakerAdapter;
+        mMineOnly = !showAll;
     }
 
     private CoffeeMaker[] getCoffeeMakerDataFromJson(String jsonStr)
             throws JSONException {
 
-        Log.v(LOG_TAG, "getCoffeeMakerDataFromJson: yippe!");
+        if (TextUtils.isEmpty(jsonStr)) {
+            Log.e(LOG_TAG, "No json value provided");
+            return null;
+        }
 
         JSONArray jsonArray = new JSONArray(jsonStr);
         CoffeeMaker[] result = new CoffeeMaker[jsonArray.length()];
@@ -59,60 +68,20 @@ public class FetchCoffeeMakersTask extends AsyncTask<String, Void, CoffeeMaker[]
                 result[i].setLatitude(cm.getDouble(CM_LAT));
                 result[i].setLongitude(cm.getDouble(CM_LONG));
             }
+            result[i].setOwner(cm.getString(CM_OWNER));
+            result[i].setUsername(cm.getString(CM_USERNAME));
         }
         return result;
     }
 
     @Override
     protected CoffeeMaker[] doInBackground(String... params) {
-        final String COFFEE_MAKER_BASE_URL = API_BASE_URL + API_COFFEE_MAKERS;
-
+        String queryParam = "?mine=" + (mMineOnly ? "true" : "false");
+        final String COFFEE_MAKER_BASE_URL = API_BASE_URL + API_COFFEE_MAKERS + queryParam;
+        User user = ((CoffeeNowApp) mContext.getApplicationContext()).getUser();
         String jsonResponse;
 
-        HttpURLConnection connection = null;
-        BufferedReader reader = null;
-
-        try {
-            Uri buildUri = Uri.parse(COFFEE_MAKER_BASE_URL).buildUpon().build();
-            URL url = new URL(buildUri.toString());
-
-            connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.connect();
-
-            InputStream stream = connection.getInputStream();
-            if (stream == null) {
-                return null;
-            }
-            reader = new BufferedReader(new InputStreamReader(stream));
-
-            StringBuffer buffer = new StringBuffer();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                buffer.append(line + "\n");
-            }
-
-            if (buffer.length() == 0) {
-                return null;
-            }
-
-            jsonResponse = buffer.toString();
-        } catch (IOException e) {
-            Log.e(LOG_TAG, "Error", e);
-
-            return null;
-        } finally {
-            if (connection != null) {
-                connection.disconnect();
-            }
-            if (reader != null) {
-                try {
-                    reader.close();
-                } catch (IOException e) {
-                    Log.e(LOG_TAG, "Error closing reader", e);
-                }
-            }
-        }
+        jsonResponse = ApiHelper.callApi(COFFEE_MAKER_BASE_URL, "GET", user, null);
 
         try {
             return getCoffeeMakerDataFromJson(jsonResponse);
